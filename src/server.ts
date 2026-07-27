@@ -12,6 +12,39 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
+const TENANT_ID = 'bbcf0814-0ddf-45e8-9081-46f4f44e31ac';
+const MS_BASE = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0`;
+
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/api/auth/devicecode', async (req, res) => {
+  try {
+    const response = await fetch(`${MS_BASE}/devicecode`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(req.body as Record<string, string>).toString(),
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch {
+    res.status(502).json({ error: 'proxy_error', error_description: 'Error contacting Microsoft' });
+  }
+});
+
+app.post('/api/auth/token', async (req, res) => {
+  try {
+    const response = await fetch(`${MS_BASE}/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(req.body as Record<string, string>).toString(),
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch {
+    res.status(502).json({ error: 'proxy_error', error_description: 'Error contacting Microsoft' });
+  }
+});
+
 /**
  * Example Express Rest API endpoints can be defined here.
  * Uncomment and define endpoints as necessary.

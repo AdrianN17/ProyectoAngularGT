@@ -1,0 +1,93 @@
+.we-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-width: 480px;
+}
+
+.we-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.we-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.we-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.we-close:hover { color: #333; }
+
+.we-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.we-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.we-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  border: 1.5px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.18s;
+  font-family: inherit;
+}
+
+.we-input:focus { border-color: #0078d4; }
+
+.we-error {
+  font-size: 0.78rem;
+  color: #d13438;
+}
+
+.we-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #0078d4;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin-top: 4px;
+  font-family: inherit;
+}
+
+.we-btn:hover:not(:disabled) { background: #106ebe; }
+.we-btn:disabled              { background: #b3d4f0; cursor: not-allowed; }
+.we-btn.loading               { background: #5aa8e6; }

@@ -1,0 +1,10 @@
+@if (loading()) {
+  <p class="wi-loading">Buscando wallet...</p>
+} @else if (wallet(); as w) {
+  <div class="wi-card">
+    <p class="wi-name">Pertenece a: <strong>{{ w.Name }} {{ w.LastName }}</strong></p>
+    <p class="wi-currency">{{ currencyLabel(w.Currency) }}</p>
+  </div>
+} @else if (error()) {
+  <p class="wi-error">{{ error() }}</p>
+}

@@ -1,0 +1,72 @@
+@if (loading()) {
+  <div class="rl-state">
+    <div class="spinner"></div>
+    <span>Cargando recargas...</span>
+  </div>
+} @else if (error()) {
+  <div class="rl-state">
+    <span class="rl-error">{{ error() }}</span>
+  </div>
+} @else {
+
+  <!-- Barra de búsqueda -->
+  <div class="rl-toolbar">
+    <input
+      class="rl-search"
+      type="search"
+      placeholder="Buscar por ID, moneda o método…"
+      [value]="searchTerm()"
+      (input)="setSearch($any($event.target).value)" />
+    <span class="rl-count">{{ filtered().length }} registro(s)</span>
+  </div>
+
+  @if (filtered().length === 0) {
+    <div class="rl-state">
+      <span class="rl-empty">Sin recargas para mostrar</span>
+    </div>
+  } @else {
+    <div class="rl-table-wrap">
+      <table class="rl-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('RechargeId')">ID Recarga {{ sortIcon('RechargeId') }}</th>
+            <th class="sortable" (click)="setSort('Amount')">Monto {{ sortIcon('Amount') }}</th>
+            <th class="sortable" (click)="setSort('Currency')">Moneda {{ sortIcon('Currency') }}</th>
+            <th class="sortable" (click)="setSort('MethodType')">Método {{ sortIcon('MethodType') }}</th>
+            <th class="sortable" (click)="setSort('CreatedAt')">Fecha {{ sortIcon('CreatedAt') }}</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of paged(); track r.RechargeId) {
+            <tr>
+              <td class="mono">{{ r.RechargeId }}</td>
+              <td class="amount">{{ r.Amount | number:'1.2-2' }}</td>
+              <td>{{ r.Currency }}</td>
+              <td><span class="badge">{{ r.MethodType }}</span></td>
+              <td>{{ r.CreatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="actions">
+                @if (deletingId() === r.RechargeId) {
+                  <div class="confirm-row">
+                    <span class="confirm-text">¿Eliminar?</span>
+                    <button class="btn-confirm" (click)="executeDelete(r.RechargeId)">Sí</button>
+                    <button class="btn-cancel"  (click)="cancelDelete()">No</button>
+                  </div>
+                } @else {
+                  <button class="btn-delete" (click)="confirmDelete(r.RechargeId)">Eliminar</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="rl-pagination">
+      <button class="btn-page" [disabled]="currentPage() === 1" (click)="prevPage()">‹ Anterior</button>
+      <span class="page-info">Página {{ currentPage() }} de {{ totalPages() }}</span>
+      <button class="btn-page" [disabled]="currentPage() === totalPages()" (click)="nextPage()">Siguiente ›</button>
+    </div>
+  }
+}

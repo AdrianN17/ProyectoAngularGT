@@ -1,0 +1,63 @@
+<div class="tc-card">
+  <div class="tc-header">
+    <h2 class="tc-title">Nueva Transferencia</h2>
+    <button type="button" class="tc-close" (click)="closed.emit()" aria-label="Cerrar">&times;</button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+    <!-- Wallet destino -->
+    <div class="field-group">
+      <label class="tc-label">Wallet destino</label>
+      <input
+        formControlName="ToWalletId"
+        class="tc-input"
+        type="text"
+        placeholder="Ingrese el ID de la wallet destino"
+        (input)="onToWalletIdInput()" />
+      @if (fieldError('ToWalletId')) {
+        <span class="tc-error">{{ fieldError('ToWalletId') }}</span>
+      }
+      <app-wallet-info
+        [walletId]="toWalletIdForLookup()"
+        (walletLoaded)="onWalletLoaded($event)" />
+    </div>
+
+    <!-- Monto -->
+    <div class="field-group">
+      <label class="tc-label">Monto</label>
+      <input
+        formControlName="Amount"
+        class="tc-input"
+        type="number"
+        placeholder="Monto"
+        min="0.01"
+        step="0.01"
+        [class.disabled]="!walletReady()" />
+      @if (fieldError('Amount')) {
+        <span class="tc-error">{{ fieldError('Amount') }}</span>
+      }
+    </div>
+
+    <!-- Moneda (solo lectura) -->
+    <div class="field-group">
+      <label class="tc-label">Moneda</label>
+      <input
+        class="tc-input disabled"
+        type="text"
+        placeholder="Se carga automáticamente"
+        [value]="currency()"
+        disabled />
+    </div>
+
+    <button
+      type="submit"
+      class="tc-btn"
+      [disabled]="!walletReady() || submitting()"
+      [class.loading]="submitting()">
+      {{ submitting() ? 'Enviando...' : 'Enviar transferencia' }}
+    </button>
+
+  </form>
+</div>
+

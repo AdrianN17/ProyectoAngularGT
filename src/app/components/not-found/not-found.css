@@ -1,0 +1,48 @@
+.nf-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  gap: 12px;
+  text-align: center;
+  background: #f3f4f6;
+}
+
+.nf-code {
+  font-size: 7rem;
+  font-weight: 800;
+  color: #0078d4;
+  margin: 0;
+  line-height: 1;
+}
+
+.nf-message {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.nf-sub {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.nf-link {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: #0078d4;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.nf-link:hover {
+  background: #106ebe;
+}

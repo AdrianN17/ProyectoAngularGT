@@ -1,0 +1,10 @@
+{
+  "/api/auth": {
+    "target": "https://login.microsoftonline.com",
+    "changeOrigin": true,
+    "secure": true,
+    "pathRewrite": {
+      "^/api/auth": "/bbcf0814-0ddf-45e8-9081-46f4f44e31ac/oauth2/v2.0"
+    }
+  }
+}

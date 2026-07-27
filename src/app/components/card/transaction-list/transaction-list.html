@@ -1,0 +1,74 @@
+@if (loading()) {
+  <div class="tl-state">
+    <div class="spinner"></div>
+    <span>Cargando transacciones...</span>
+  </div>
+} @else if (error()) {
+  <div class="tl-state">
+    <span class="tl-error">{{ error() }}</span>
+  </div>
+} @else {
+
+  <!-- Barra de búsqueda -->
+  <div class="tl-toolbar">
+    <input
+      class="tl-search"
+      type="search"
+      placeholder="Buscar por ID, wallet, moneda o tipo…"
+      [value]="searchTerm()"
+      (input)="setSearch($any($event.target).value)" />
+    <span class="tl-count">{{ filtered().length }} registro(s)</span>
+  </div>
+
+  @if (filtered().length === 0) {
+    <div class="tl-state">
+      <span class="tl-empty">Sin transacciones para mostrar</span>
+    </div>
+  } @else {
+    <div class="tl-table-wrap">
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('PaymentId')">ID Pago {{ sortIcon('PaymentId') }}</th>
+            <th class="sortable" (click)="setSort('ToWalletId')">Destino {{ sortIcon('ToWalletId') }}</th>
+            <th class="sortable" (click)="setSort('Amount')">Monto {{ sortIcon('Amount') }}</th>
+            <th class="sortable" (click)="setSort('Currency')">Moneda {{ sortIcon('Currency') }}</th>
+            <th class="sortable" (click)="setSort('SourceType')">Tipo {{ sortIcon('SourceType') }}</th>
+            <th class="sortable" (click)="setSort('CreatedAt')">Fecha {{ sortIcon('CreatedAt') }}</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tx of paged(); track tx.PaymentId) {
+            <tr>
+              <td class="mono">{{ tx.PaymentId }}</td>
+              <td class="mono">{{ tx.ToWalletId }}</td>
+              <td class="amount">{{ tx.Amount | number:'1.2-2' }}</td>
+              <td>{{ tx.Currency }}</td>
+              <td><span class="badge">{{ tx.SourceType }}</span></td>
+              <td>{{ tx.CreatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="actions">
+                @if (deletingId() === tx.PaymentId) {
+                  <div class="confirm-row">
+                    <span class="confirm-text">¿Eliminar?</span>
+                    <button class="btn-confirm" (click)="executeDelete(tx.PaymentId)">Sí</button>
+                    <button class="btn-cancel"  (click)="cancelDelete()">No</button>
+                  </div>
+                } @else {
+                  <button class="btn-delete" (click)="confirmDelete(tx.PaymentId)">Eliminar</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="tl-pagination">
+      <button class="btn-page" [disabled]="currentPage() === 1" (click)="prevPage()">‹ Anterior</button>
+      <span class="page-info">Página {{ currentPage() }} de {{ totalPages() }}</span>
+      <button class="btn-page" [disabled]="currentPage() === totalPages()" (click)="nextPage()">Siguiente ›</button>
+    </div>
+  }
+}
