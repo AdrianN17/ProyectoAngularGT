@@ -2,11 +2,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
-  padding: 0 24px;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  height: 64px;
+  padding: 0 28px;
+  background: var(--ft-dark, #0A2540);
+  border-bottom: 2px solid var(--ft-cyan, #00C4CC);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -15,14 +14,24 @@
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 3px;
 }
 
 .header-title {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: #0078d4;
+  color: #fff;
   font-family: 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .header-nav {
@@ -32,18 +41,22 @@
 }
 
 .btn-logout {
-  padding: 6px 18px;
-  border: 1px solid #d13438;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   background: transparent;
-  color: #d13438;
-  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 7px;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
   font-family: inherit;
 }
 
 .btn-logout:hover {
-  background: #d13438;
-  color: #fff;
+  border-color: var(--ft-cyan, #00C4CC);
+  color: var(--ft-cyan, #00C4CC);
+  background: rgba(0, 196, 204, 0.08);
 }

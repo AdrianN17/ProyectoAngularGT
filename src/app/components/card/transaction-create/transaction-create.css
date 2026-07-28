@@ -62,7 +62,7 @@
 }
 
 .tc-input:focus {
-  border-color: #0078d4;
+  border-color: #1A73E8;
 }
 
 .tc-input.disabled {
@@ -78,7 +78,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: #0078d4;
+  background: #1A73E8;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -87,15 +87,15 @@
 }
 
 .tc-btn:hover:not(:disabled) {
-  background: #106ebe;
+  background: #1565C5;
 }
 
 .tc-btn:disabled {
-  background: #b3d4f0;
+  background: #93c5fd;
   cursor: not-allowed;
 }
 
-.tc-btn.loading               { background: #5aa8e6; }
+.tc-btn.loading               { background: #60a5fa; }
 
 /* ---- Error messages ---- */
 .tc-error {

@@ -1,0 +1,58 @@
+<div class="sw-page">
+
+  <!-- Encabezado -->
+  <section class="sw-section">
+    <div class="sw-section-header">
+      <h2>Gestión de Recarga</h2>
+    </div>
+
+    <!-- Búsqueda de wallet -->
+    <div class="sw-search-body">
+      <div class="field-group">
+        <label class="sw-label">Wallet del cliente</label>
+        <input
+          class="sw-input"
+          type="text"
+          placeholder="Ingrese el ID de la wallet"
+          [value]="walletIdInput()"
+          (input)="onInput($any($event.target).value)" />
+      </div>
+
+      <app-wallet-info
+        [walletId]="walletIdInput()"
+        (walletLoaded)="onWalletLoaded($event)" />
+    </div>
+  </section>
+
+  <!-- Acciones + lista reciente (solo si wallet encontrada) -->
+  @if (confirmedWallet(); as w) {
+
+    <div class="sw-action-row">
+      <button class="sw-btn-recharge" (click)="showRechargeModal.set(true)">
+        Recargar
+      </button>
+    </div>
+
+    <section class="sw-section">
+      <div class="sw-section-header">
+        <h2>Últimas recargas</h2>
+        <span class="sw-owner">{{ w.Name }} {{ w.LastName }}</span>
+      </div>
+      <app-recharge-list-minimun [walletId]="w.WalletId" />
+    </section>
+
+  }
+
+  <!-- Modal Recarga -->
+  @if (showRechargeModal() && confirmedWallet()) {
+    <div class="sw-modal-backdrop" (click)="showRechargeModal.set(false)">
+      <div class="sw-modal-container" (click)="$event.stopPropagation()">
+        <app-recharge-create
+          [preselectedWalletId]="confirmedWallet()!.WalletId"
+          (closed)="showRechargeModal.set(false)"
+          (success)="onRechargeSuccess()" />
+      </div>
+    </div>
+  }
+
+</div>

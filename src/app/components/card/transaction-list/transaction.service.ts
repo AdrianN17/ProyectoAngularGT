@@ -31,10 +31,17 @@ export class TransactionService {
     );
   }
 
-  deleteTransaction(paymentId: string): Observable<void> {
+  deleteTransaction(
+    paymentId: string,
+    body: { FromWalletId: string; ToWalletId: string; Amount: number; Currency: string; SourceType: string }
+  ): Observable<void> {
+    const headers = new HttpHeaders({
+      Authorization:  `Bearer ${this.authService.getToken()}`,
+      'Content-Type': 'application/json',
+    });
     return this.http.delete<void>(
       `${this.apiUrl}/transactions/${paymentId}`,
-      { headers: this.authHeaders }
+      { headers, body }
     );
   }
 }

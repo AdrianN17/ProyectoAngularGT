@@ -1,0 +1,26 @@
+@if (loading()) {
+  <div class="rlm-state">
+    <div class="spinner"></div>
+    <span>Cargando…</span>
+  </div>
+} @else if (error()) {
+  <div class="rlm-state">
+    <span class="rlm-error">{{ error() }}</span>
+  </div>
+} @else if (recharges().length === 0) {
+  <div class="rlm-state">
+    <span class="rlm-empty">Sin recargas registradas</span>
+  </div>
+} @else {
+  <ul class="rlm-list">
+    @for (r of recharges(); track r.RechargeId) {
+      <li class="rlm-item">
+        <div class="rlm-left">
+          <span class="rlm-method">{{ r.MethodType }}</span>
+          <span class="rlm-date">{{ r.CreatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <span class="rlm-amount">+ {{ r.Amount | number:'1.2-2' }} {{ r.Currency }}</span>
+      </li>
+    }
+  </ul>
+}

@@ -85,8 +85,12 @@ export class AuthCallback implements OnInit {
         const roles = this.authService.getRoles();
         if (roles.includes('User-App')) {
           this.router.navigate(['/user-wallet']);
+        } else if (roles.includes('Seller') || roles.includes('Seller-App')) {
+          this.router.navigate(['/seller-wallet']);
+        } else if (roles.includes('Support') || roles.includes('Admin') || roles.includes('Support-App')) {
+          this.router.navigate(['/support-wallet']);
         } else {
-          this.error.set(`Acceso denegado. Tu rol actual es: ${roles.join(', ') || 'ninguno'}. Se requiere el rol 'User-App'.`);
+          this.error.set(`Acceso denegado. Tu rol actual es: ${roles.join(', ') || 'ninguno'}.`);
         }
       },
       error: (err: { message?: string; error?: { error?: string; error_description?: string }; status?: number }) => {

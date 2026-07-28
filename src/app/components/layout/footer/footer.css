@@ -1,9 +1,9 @@
 .app-footer {
   text-align: center;
-  padding: 16px 24px;
-  background: #fff;
-  border-top: 1px solid #e5e7eb;
+  padding: 18px 24px;
+  background: var(--ft-dark, #0A2540);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.38);
   font-family: 'Segoe UI', system-ui, sans-serif;
 }

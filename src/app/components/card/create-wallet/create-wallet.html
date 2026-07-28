@@ -1,0 +1,76 @@
+<div class="cw-card">
+  <div class="cw-header">
+    <h2 class="cw-title">Nueva Wallet</h2>
+    <button type="button" class="cw-close" (click)="closed.emit()" aria-label="Cerrar">&times;</button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+    <!-- Nombre / Apellido -->
+    <div class="cw-row">
+      <div class="field-group">
+        <label class="cw-label">Nombre</label>
+        <input formControlName="Name" class="cw-input" type="text" placeholder="Nombre" />
+        @if (fieldError('Name')) { <span class="cw-error">{{ fieldError('Name') }}</span> }
+      </div>
+      <div class="field-group">
+        <label class="cw-label">Apellido</label>
+        <input formControlName="LastName" class="cw-input" type="text" placeholder="Apellido" />
+        @if (fieldError('LastName')) { <span class="cw-error">{{ fieldError('LastName') }}</span> }
+      </div>
+    </div>
+
+    <!-- Tipo documento / Número -->
+    <div class="cw-row">
+      <div class="field-group">
+        <label class="cw-label">Tipo de documento</label>
+        <select formControlName="DocumentType" class="cw-input">
+          @for (dt of documentTypes; track dt) {
+            <option [value]="dt">{{ dt }}</option>
+          }
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="cw-label">Número de documento</label>
+        <input formControlName="DocumentNumber" class="cw-input" type="text" placeholder="Ej: 77091555" />
+        @if (fieldError('DocumentNumber')) { <span class="cw-error">{{ fieldError('DocumentNumber') }}</span> }
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="field-group">
+      <label class="cw-label">Correo electrónico</label>
+      <input formControlName="Email" class="cw-input" type="email" placeholder="correo@ejemplo.com" />
+      @if (fieldError('Email')) { <span class="cw-error">{{ fieldError('Email') }}</span> }
+    </div>
+
+    <!-- Teléfono / Moneda -->
+    <div class="cw-row">
+      <div class="field-group">
+        <label class="cw-label">Teléfono</label>
+        <input formControlName="Phone" class="cw-input" type="text" placeholder="999888666" />
+        @if (fieldError('Phone')) { <span class="cw-error">{{ fieldError('Phone') }}</span> }
+      </div>
+      <div class="field-group">
+        <label class="cw-label">Moneda</label>
+        <select formControlName="Currency" class="cw-input">
+          @for (c of currencies; track c) {
+            <option [value]="c">{{ c }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Límite diario -->
+    <div class="field-group">
+      <label class="cw-label">Límite diario</label>
+      <input formControlName="DailyLimit" class="cw-input" type="number" min="1" max="100000" step="1" />
+      @if (fieldError('DailyLimit')) { <span class="cw-error">{{ fieldError('DailyLimit') }}</span> }
+    </div>
+
+    <button type="submit" class="cw-btn" [disabled]="submitting" [class.loading]="submitting">
+      {{ submitting ? 'Creando...' : 'Crear Wallet' }}
+    </button>
+
+  </form>
+</div>

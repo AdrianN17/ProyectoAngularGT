@@ -1,0 +1,121 @@
+.sw-page {
+  max-width: 680px;
+  margin: 40px auto;
+  padding: 0 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ---- Secciones ---- */
+.sw-section {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.sw-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sw-section-header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.sw-owner {
+  font-size: 0.85rem;
+  color: #1A73E8;
+  font-weight: 500;
+}
+
+/* ---- Búsqueda ---- */
+.sw-search-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sw-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sw-input {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 0.95rem;
+  border: 1.5px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.18s;
+  font-family: inherit;
+}
+
+.sw-input:focus { border-color: #1A73E8; }
+
+/* ---- Botón recargar ---- */
+.sw-action-row {
+  display: flex;
+  justify-content: center;
+}
+
+.sw-btn-recharge {
+  padding: 10px 48px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: #009DA3;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s;
+  font-family: inherit;
+}
+
+.sw-btn-recharge:hover { background: #007A7F; }
+
+/* ---- Modal overlay ---- */
+.sw-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: fade-in 0.18s ease;
+}
+
+.sw-modal-container {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.22);
+  animation: scale-in 0.2s ease;
+}
+
+@keyframes fade-in  { from { opacity: 0; }         to { opacity: 1; } }
+@keyframes scale-in { from { transform: scale(.95); } to { transform: scale(1); } }

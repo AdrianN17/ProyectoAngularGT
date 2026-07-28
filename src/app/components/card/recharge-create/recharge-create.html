@@ -1,0 +1,66 @@
+<div class="rc-card">
+  <div class="rc-header">
+    <h2 class="rc-title">Nueva Recarga</h2>
+    <button type="button" class="rc-close" (click)="closed.emit()" aria-label="Cerrar">&times;</button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+    <!-- Wallet a recargar -->
+    <div class="field-group">
+      <label class="rc-label">Wallet a recargar</label>
+      @if (preselected()) {
+        <input class="rc-input disabled" type="text" [value]="walletIdForLookup()" disabled />
+      } @else {
+        <input
+          formControlName="WalletId"
+          class="rc-input"
+          type="text"
+          placeholder="Ingrese el ID de la wallet"
+          (input)="onWalletIdInput()" />
+        @if (fieldError('WalletId')) {
+          <span class="rc-error">{{ fieldError('WalletId') }}</span>
+        }
+      }
+      <app-wallet-info
+        [walletId]="walletIdForLookup()"
+        (walletLoaded)="onWalletLoaded($event)" />
+    </div>
+
+    <!-- Monto -->
+    <div class="field-group">
+      <label class="rc-label">Monto</label>
+      <input
+        formControlName="Amount"
+        class="rc-input"
+        type="number"
+        placeholder="Monto"
+        min="0.01"
+        step="0.01"
+        [class.disabled]="!walletReady()" />
+      @if (fieldError('Amount')) {
+        <span class="rc-error">{{ fieldError('Amount') }}</span>
+      }
+    </div>
+
+    <!-- Moneda (solo lectura) -->
+    <div class="field-group">
+      <label class="rc-label">Moneda</label>
+      <input
+        class="rc-input disabled"
+        type="text"
+        placeholder="Se carga automáticamente"
+        [value]="currency()"
+        disabled />
+    </div>
+
+    <button
+      type="submit"
+      class="rc-btn"
+      [disabled]="!walletReady() || submitting()"
+      [class.loading]="submitting()">
+      {{ submitting() ? 'Procesando...' : 'Recargar' }}
+    </button>
+
+  </form>
+</div>

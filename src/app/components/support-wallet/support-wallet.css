@@ -1,0 +1,426 @@
+/* ── Page layout ──────────────────────────────────────── */
+.sw-page {
+  max-width: 960px;
+  margin: 36px auto;
+  padding: 0 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Top bar ──────────────────────────────────────────── */
+.sw-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sw-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.sw-subtitle {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.btn-create {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background: #1A73E8;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s, box-shadow 0.18s;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.25);
+}
+
+.btn-create:hover { background: #1565C5; box-shadow: 0 4px 14px rgba(26, 115, 232, 0.35); }
+
+/* ── Search card ─────────────────────────────────────── */
+.sw-search-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sw-search-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sw-search-row { display: flex; gap: 12px; }
+
+.sw-input-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sw-search-icon {
+  position: absolute;
+  left: 14px;
+  color: #9ca3af;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.sw-input {
+  width: 100%;
+  padding: 12px 44px 12px 42px;
+  font-size: 0.92rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  font-family: 'Consolas', 'Courier New', monospace;
+  background: #fafafa;
+  color: #111827;
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+  box-sizing: border-box;
+}
+
+.sw-input:focus {
+  border-color: #1A73E8;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.sw-input::placeholder { color: #c4c9d4; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+.sw-spinner {
+  position: absolute;
+  right: 14px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #1A73E8;
+  border-radius: 50%;
+  animation: sw-spin 0.7s linear infinite;
+}
+
+@keyframes sw-spin { to { transform: rotate(360deg); } }
+
+.sw-input-error { font-size: 0.82rem; color: #d13438; margin: 0; }
+.sw-input-hint  { font-size: 0.82rem; color: #9ca3af; margin: 0; }
+
+/* ── Wallet card ─────────────────────────────────────── */
+.sw-wallet-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* Header */
+.sw-wallet-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, #0A2540 0%, #1A73E8 100%);
+  flex-wrap: wrap;
+}
+
+.sw-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+}
+
+.sw-wallet-identity {
+  flex: 1;
+  min-width: 0;
+}
+
+.sw-wallet-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.sw-wallet-id {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  word-break: break-all;
+}
+
+.sw-wallet-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  margin-right: 8px;
+}
+
+.sw-balance-label {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sw-balance-amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sw-wallet-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-edit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1A73E8;
+  background: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+
+.btn-edit:hover { background: #EEF2FF; }
+
+.btn-danger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d13438;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+
+.btn-danger:hover { background: #fff; color: #b02020; }
+
+/* Details grid */
+.sw-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #f3f4f6;
+}
+
+.sw-detail {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 24px;
+  border-right: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.sw-detail:nth-child(3n) { border-right: none; }
+.sw-detail:nth-last-child(-n+3) { border-bottom: none; }
+
+.sw-detail-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+
+.sw-detail-value {
+  font-size: 0.92rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+/* Tabs */
+.sw-tabs {
+  display: flex;
+  border-top: 1px solid #f3f4f6;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.sw-tab-btn {
+  flex: 1;
+  padding: 14px 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.18s, border-color 0.18s;
+  font-family: inherit;
+}
+
+.sw-tab-btn.active {
+  color: #1A73E8;
+  border-bottom-color: #1A73E8;
+}
+
+.sw-tab-btn:hover:not(.active) { color: #374151; }
+
+.sw-tab-content { min-height: 200px; }
+
+/* ── Modal ──────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: sw-fade 0.18s ease;
+}
+
+.modal-container {
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+  animation: sw-scale 0.2s ease;
+}
+
+/* Delete confirm modal */
+.modal-delete-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 36px 40px;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+  animation: sw-scale 0.2s ease;
+}
+
+.modal-delete-icon {
+  background: #fef2f2;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.modal-delete-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.modal-delete-owner {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.modal-delete-id {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  word-break: break-all;
+  margin: 0;
+}
+
+.modal-delete-warn {
+  font-size: 0.85rem;
+  color: #d13438;
+  margin: 4px 0 8px;
+}
+
+.modal-delete-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.9rem;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.btn-cancel:hover:not(:disabled) { background: #f9fafb; }
+.btn-cancel:disabled              { opacity: 0.5; cursor: not-allowed; }
+
+.btn-confirm-delete {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.9rem;
+  border: none;
+  background: #d13438;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.btn-confirm-delete:hover:not(:disabled) { background: #b02020; }
+.btn-confirm-delete:disabled             { background: #e8a0a2; cursor: not-allowed; }
+
+@keyframes sw-fade  { from { opacity: 0; }           to { opacity: 1; } }
+@keyframes sw-scale { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }

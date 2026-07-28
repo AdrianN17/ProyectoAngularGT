@@ -35,7 +35,6 @@
             <th class="sortable" (click)="setSort('Currency')">Moneda {{ sortIcon('Currency') }}</th>
             <th class="sortable" (click)="setSort('SourceType')">Tipo {{ sortIcon('SourceType') }}</th>
             <th class="sortable" (click)="setSort('CreatedAt')">Fecha {{ sortIcon('CreatedAt') }}</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -47,17 +46,6 @@
               <td>{{ tx.Currency }}</td>
               <td><span class="badge">{{ tx.SourceType }}</span></td>
               <td>{{ tx.CreatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td class="actions">
-                @if (deletingId() === tx.PaymentId) {
-                  <div class="confirm-row">
-                    <span class="confirm-text">¿Eliminar?</span>
-                    <button class="btn-confirm" (click)="executeDelete(tx.PaymentId)">Sí</button>
-                    <button class="btn-cancel"  (click)="cancelDelete()">No</button>
-                  </div>
-                } @else {
-                  <button class="btn-delete" (click)="confirmDelete(tx.PaymentId)">Eliminar</button>
-                }
-              </td>
             </tr>
           }
         </tbody>

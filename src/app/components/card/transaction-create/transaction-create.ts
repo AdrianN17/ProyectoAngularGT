@@ -13,6 +13,7 @@ import { ToastService } from '../../../services/toast.service';
 import { WalletInfo } from '../wallet-info/wallet-info';
 import { WalletSchemaResponse } from '../../../services/wallet.service';
 import { API_BASE } from '../../../core/api.config';
+import { SourceType } from '../../../models/source-type.enum';
 
 const FROM_WALLET_ID = '9afc4154-5cf6-4ffc-b946-a0c5eae4a4ec';
 
@@ -51,11 +52,14 @@ export class TransactionCreate {
   walletReady         = signal(false);
   submitting          = signal(false);
 
+  readonly sourceTypes = Object.values(SourceType);
+
   private lastSubmittedHash = '';
 
   form = this.fb.group({
     ToWalletId: ['', [Validators.required, uuidValidator, noSelfTransferValidator(FROM_WALLET_ID)]],
-    Amount: [{ value: null as number | null, disabled: true }, [Validators.required, Validators.min(0.01)]],
+    Amount:     [{ value: null as number | null, disabled: true }, [Validators.required, Validators.min(0.01)]],
+    SourceType: [SourceType.APP, Validators.required],
   });
 
   onToWalletIdInput(): void {
@@ -123,7 +127,7 @@ export class TransactionCreate {
       ToWalletId:   raw.ToWalletId,
       Amount:       raw.Amount,
       Currency:     this.currency(),
-      SourceType:   'APP',
+      SourceType:   raw.SourceType,
     };
 
     this.http.post(`${API_BASE.transaction}/Transactions`, body, { headers }).subscribe({

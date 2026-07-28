@@ -14,12 +14,9 @@
     <section class="wallet-section">
       <div class="section-header">
         <h2>Detalles de la wallet</h2>
-        <div class="header-actions">
-          <div class="balance-badge">
-            <span class="balance-currency">{{ w.Currency }}</span>
-            <span class="balance-amount">{{ w.balanceAmount | number:'1.2-2' }}</span>
-          </div>
-          <button class="btn-edit" (click)="showEditModal.set(true)">Editar</button>
+        <div class="balance-badge">
+          <span class="balance-currency">{{ w.Currency }}</span>
+          <span class="balance-amount">{{ w.balanceAmount | number:'1.2-2' }}</span>
         </div>
       </div>
       <div class="details-grid">
@@ -50,9 +47,10 @@
       </div>
     </section>
 
-    <!-- Botón Transferir -->
+    <!-- Botones de acción -->
     <div class="transfer-row">
       <button class="btn-transfer" (click)="openTransferModal()">Transferir</button>
+      <button class="btn-recharge" (click)="showRechargeModal.set(true)">Recargar</button>
     </div>
 
     <!-- Sección 2: Tabs Transferencias / Recargas -->
@@ -93,14 +91,13 @@
     </div>
   }
 
-  <!-- Modal Edición -->
-  @if (showEditModal() && wallet()) {
-    <div class="modal-backdrop" (click)="showEditModal.set(false)">
+  <!-- Modal Recarga -->
+  @if (showRechargeModal()) {
+    <div class="modal-backdrop" (click)="showRechargeModal.set(false)">
       <div class="modal-container" (click)="$event.stopPropagation()">
-        <app-wallet-edit
-          [wallet]="wallet()!"
-          (closed)="showEditModal.set(false)"
-          (updated)="onWalletUpdated($event)" />
+        <app-recharge-create
+          (closed)="showRechargeModal.set(false)"
+          (success)="showRechargeModal.set(false)" />
       </div>
     </div>
   }

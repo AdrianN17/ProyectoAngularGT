@@ -29,8 +29,6 @@ export class TransactionList implements OnInit {
   sortField = signal<SortField>('CreatedAt');
   sortDir   = signal<SortDir>('desc');
 
-  deletingId = signal<string | null>(null);
-
   sorted = computed(() => {
     const field = this.sortField() as keyof TransactionSchemaResponse;
     const dir   = this.sortDir();
@@ -86,23 +84,6 @@ export class TransactionList implements OnInit {
   prevPage(): void { if (this.currentPage() > 1) this.currentPage.update(p => p - 1); }
   nextPage(): void { if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1); }
 
-  confirmDelete(paymentId: string): void { this.deletingId.set(paymentId); }
-  cancelDelete():                   void { this.deletingId.set(null); }
-
-  executeDelete(paymentId: string): void {
-    this.transactionService.deleteTransaction(paymentId).subscribe({
-      next: () => {
-        this.transactions.update(list => list.filter(t => t.PaymentId !== paymentId));
-        this.deletingId.set(null);
-        this.toastService.show('Transacción eliminada', 'success');
-      },
-      error: () => {
-        this.toastService.show('Error al eliminar la transacción', 'error');
-        this.deletingId.set(null);
-      },
-    });
-  }
-
   ngOnInit(): void {
     this.transactionService.getTransactions(this.walletId).subscribe({
       next: (data) => {
@@ -117,3 +98,4 @@ export class TransactionList implements OnInit {
     });
   }
 }
+

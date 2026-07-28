@@ -1,3 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
-
+/* ── Global styles ── */
 @import 'tailwindcss';
+
+:root {
+  --ft-blue:       #1A73E8;
+  --ft-blue-dark:  #1565C5;
+  --ft-cyan:       #00C4CC;
+  --ft-cyan-dark:  #009DA3;
+  --ft-dark:       #0A2540;
+  --ft-dark-2:     #1A3560;
+  --ft-white:      #FFFFFF;
+  --ft-bg:         #EEF2FF;
+  --ft-border:     #E2E8F0;
+  --ft-text:       #0A2540;
+  --ft-muted:      #64748B;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--ft-text);
+  background: var(--ft-bg);
+}

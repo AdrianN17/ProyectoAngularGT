@@ -50,6 +50,16 @@
         disabled />
     </div>
 
+    <!-- Tipo de origen -->
+    <div class="field-group">
+      <label class="tc-label">Tipo de origen</label>
+      <select formControlName="SourceType" class="tc-input">
+        @for (st of sourceTypes; track st) {
+          <option [value]="st">{{ st }}</option>
+        }
+      </select>
+    </div>
+
     <button
       type="submit"
       class="tc-btn"

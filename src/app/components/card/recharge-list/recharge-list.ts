@@ -18,9 +18,9 @@ export class RechargeList implements OnInit {
   private readonly rechargeService = inject(RechargeService);
   private readonly toastService    = inject(ToastService);
 
-  recharges    = signal<RechargeSchemaResponse[]>([]);
-  loading      = signal(true);
-  error        = signal('');
+  recharges   = signal<RechargeSchemaResponse[]>([]);
+  loading     = signal(true);
+  error       = signal('');
 
   searchTerm  = signal('');
   currentPage = signal(1);
@@ -28,8 +28,6 @@ export class RechargeList implements OnInit {
 
   sortField = signal<SortField>('CreatedAt');
   sortDir   = signal<SortDir>('desc');
-
-  deletingId = signal<string | null>(null);
 
   sorted = computed(() => {
     const field = this.sortField() as keyof RechargeSchemaResponse;
@@ -85,23 +83,6 @@ export class RechargeList implements OnInit {
   prevPage(): void { if (this.currentPage() > 1) this.currentPage.update(p => p - 1); }
   nextPage(): void { if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1); }
 
-  confirmDelete(rechargeId: string): void { this.deletingId.set(rechargeId); }
-  cancelDelete():                    void { this.deletingId.set(null); }
-
-  executeDelete(rechargeId: string): void {
-    this.rechargeService.deleteRecharge(rechargeId).subscribe({
-      next: () => {
-        this.recharges.update(list => list.filter(r => r.RechargeId !== rechargeId));
-        this.deletingId.set(null);
-        this.toastService.show('Recarga eliminada', 'success');
-      },
-      error: () => {
-        this.toastService.show('Error al eliminar la recarga', 'error');
-        this.deletingId.set(null);
-      },
-    });
-  }
-
   ngOnInit(): void {
     this.rechargeService.getRecharges(this.walletId).subscribe({
       next: (data) => {
@@ -116,3 +97,4 @@ export class RechargeList implements OnInit {
     });
   }
 }
+

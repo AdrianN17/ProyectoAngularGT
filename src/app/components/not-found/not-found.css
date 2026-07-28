@@ -7,13 +7,13 @@
   font-family: 'Segoe UI', system-ui, sans-serif;
   gap: 12px;
   text-align: center;
-  background: #f3f4f6;
+  background: #EEF2FF;
 }
 
 .nf-code {
   font-size: 7rem;
   font-weight: 800;
-  color: #0078d4;
+  color: #1A73E8;
   margin: 0;
   line-height: 1;
 }
@@ -34,7 +34,7 @@
 .nf-link {
   margin-top: 8px;
   padding: 10px 24px;
-  background: #0078d4;
+  background: #1A73E8;
   color: #fff;
   border-radius: 6px;
   text-decoration: none;
@@ -44,5 +44,5 @@
 }
 
 .nf-link:hover {
-  background: #106ebe;
+  background: #1565C5;
 }

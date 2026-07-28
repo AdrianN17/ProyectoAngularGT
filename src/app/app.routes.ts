@@ -2,13 +2,15 @@ import { Routes } from '@angular/router';
 import { Login } from './components/login/login';
 import { AuthCallback } from './components/auth-callback/auth-callback';
 import { UserWallet } from './components/user-wallet/user-wallet';
+import { SellerWallet } from './components/seller-wallet/seller-wallet';
+import { SupportWallet } from './components/support-wallet/support-wallet';
 import { Shell } from './components/layout/shell/shell';
 import { NotFound } from './components/not-found/not-found';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: 'login',          component: Login },
-  { path: 'auth/callback',  component: AuthCallback },
+  { path: 'login',         component: Login },
+  { path: 'auth/callback', component: AuthCallback },
   {
     path: '',
     component: Shell,
@@ -16,6 +18,8 @@ export const routes: Routes = [
     children: [
       { path: 'user-wallet/:walletId', component: UserWallet },
       { path: 'user-wallet',           component: UserWallet },
+      { path: 'seller-wallet',         component: SellerWallet },
+      { path: 'support-wallet',        component: SupportWallet },
       { path: '',                      redirectTo: 'user-wallet', pathMatch: 'full' },
     ],
   },

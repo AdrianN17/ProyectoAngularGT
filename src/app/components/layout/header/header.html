@@ -1,14 +1,18 @@
 <header class="app-header">
   <div class="header-brand">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 23 23">
-      <rect x="1" y="1" width="10" height="10" fill="#f35325"/>
-      <rect x="12" y="1" width="10" height="10" fill="#81bc06"/>
-      <rect x="1" y="12" width="10" height="10" fill="#05a6f0"/>
-      <rect x="12" y="12" width="10" height="10" fill="#ffba08"/>
-    </svg>
+    <img class="header-logo" src="/logo.avif" alt="WalletApp logo" />
     <span class="header-title">WalletApp</span>
   </div>
   <nav class="header-nav">
-    <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    <button class="btn-logout" (click)="logout()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Cerrar sesión
+    </button>
   </nav>
 </header>

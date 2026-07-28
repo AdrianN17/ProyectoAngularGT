@@ -106,6 +106,18 @@ export class AuthService {
     }
   }
 
+  getEmail(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+      return decoded['preferred_username'] ?? decoded['email'] ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   private generateVerifier(): string {
     const array = new Uint8Array(48);
     crypto.getRandomValues(array);
