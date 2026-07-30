@@ -39,23 +39,12 @@
       }
     </div>
 
-    <!-- Moneda (solo lectura) -->
+    <!-- Moneda -->
     <div class="field-group">
       <label class="tc-label">Moneda</label>
-      <input
-        class="tc-input disabled"
-        type="text"
-        placeholder="Se carga automáticamente"
-        [value]="currency()"
-        disabled />
-    </div>
-
-    <!-- Tipo de origen -->
-    <div class="field-group">
-      <label class="tc-label">Tipo de origen</label>
-      <select formControlName="SourceType" class="tc-input">
-        @for (st of sourceTypes; track st) {
-          <option [value]="st">{{ st }}</option>
+      <select formControlName="Currency" class="tc-input">
+        @for (c of currencies; track c) {
+          <option [value]="c">{{ c }}</option>
         }
       </select>
     </div>

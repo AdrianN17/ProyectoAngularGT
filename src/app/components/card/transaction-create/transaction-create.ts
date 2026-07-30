@@ -1,4 +1,5 @@
-import { Component, signal, inject, output } from '@angular/core';
+import { Component, signal, inject, output, PLATFORM_ID, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -11,11 +12,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
 import { WalletInfo } from '../wallet-info/wallet-info';
-import { WalletSchemaResponse } from '../../../services/wallet.service';
+import { WalletService, WalletSchemaResponse } from '../../../services/wallet.service';
 import { API_BASE } from '../../../core/api.config';
-import { SourceType } from '../../../models/source-type.enum';
-
-const FROM_WALLET_ID = '9afc4154-5cf6-4ffc-b946-a0c5eae4a4ec';
+import { Currency } from '../../../models/currency.enum';
 
 /** Validador personalizado: el valor debe ser un UUID v4 válido */
 function uuidValidator(control: AbstractControl): ValidationErrors | null {
@@ -24,61 +23,79 @@ function uuidValidator(control: AbstractControl): ValidationErrors | null {
   return UUID_RE.test(control.value.trim()) ? null : { invalidUuid: true };
 }
 
-/** Validador personalizado: no se puede transferir a la propia wallet */
-function noSelfTransferValidator(fromId: string): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) return null;
-    return control.value.trim() === fromId ? { selfTransfer: true } : null;
-  };
-}
-
 @Component({
   selector: 'app-transaction-create',
   imports: [ReactiveFormsModule, WalletInfo],
   templateUrl: './transaction-create.html',
   styleUrl: './transaction-create.css',
 })
-export class TransactionCreate {
-  private readonly http         = inject(HttpClient);
-  private readonly authService  = inject(AuthService);
-  private readonly toastService = inject(ToastService);
-  private readonly fb           = inject(FormBuilder);
+export class TransactionCreate implements OnInit {
+  private readonly http          = inject(HttpClient);
+  private readonly authService   = inject(AuthService);
+  private readonly toastService  = inject(ToastService);
+  private readonly walletService = inject(WalletService);
+  private readonly fb            = inject(FormBuilder);
+  private readonly platformId    = inject(PLATFORM_ID);
+
+  private readonly selfTransferValidator: ValidatorFn = (ctrl: AbstractControl) => {
+    if (!ctrl.value || !this.fromWalletId()) return null;
+    return ctrl.value.trim() === this.fromWalletId() ? { selfTransfer: true } : null;
+  };
+
+  private get sourceType(): string {
+    if (!isPlatformBrowser(this.platformId)) return 'WEB';
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ? 'APP' : 'WEB';
+  }
 
   closed  = output<void>();
   success = output<void>();
 
   toWalletIdForLookup = signal('');
-  currency            = signal('');
+  fromWalletId        = signal('');
   walletReady         = signal(false);
   submitting          = signal(false);
 
-  readonly sourceTypes = Object.values(SourceType);
+  readonly currencies = [Currency.PEN, Currency.USD];
 
   private lastSubmittedHash = '';
 
+  ngOnInit(): void {
+    const email = this.authService.getEmail();
+    if (!email) return;
+    this.walletService.getWalletByEmail(email).subscribe({
+      next: (wallet) => this.fromWalletId.set(wallet.WalletId),
+      error: () => this.toastService.show('No se pudo cargar tu wallet de origen', 'error'),
+    });
+  }
+
   form = this.fb.group({
-    ToWalletId: ['', [Validators.required, uuidValidator, noSelfTransferValidator(FROM_WALLET_ID)]],
+    ToWalletId: ['', [Validators.required, uuidValidator, this.selfTransferValidator]],
     Amount:     [{ value: null as number | null, disabled: true }, [Validators.required, Validators.min(0.01)]],
-    SourceType: [SourceType.APP, Validators.required],
+    Currency:   [{ value: Currency.PEN, disabled: true }, Validators.required],
   });
 
   onToWalletIdInput(): void {
     const val = this.form.get('ToWalletId')!.value ?? '';
     this.toWalletIdForLookup.set(val.trim());
     this.walletReady.set(false);
-    this.currency.set('');
     this.form.get('Amount')?.disable();
     this.form.get('Amount')?.setValue(null);
+    this.form.get('Currency')?.disable();
+    this.form.get('Currency')?.setValue(Currency.PEN);
   }
 
   onWalletLoaded(wallet: WalletSchemaResponse | null): void {
     this.walletReady.set(!!wallet);
-    this.currency.set(wallet?.Currency ?? '');
     if (wallet) {
       this.form.get('Amount')?.enable();
+      this.form.get('Currency')?.enable();
+      const walletCurrency = (wallet.Currency as Currency) === Currency.USD ? Currency.USD : Currency.PEN;
+      this.form.get('Currency')?.setValue(walletCurrency);
     } else {
       this.form.get('Amount')?.disable();
       this.form.get('Amount')?.setValue(null);
+      this.form.get('Currency')?.disable();
+      this.form.get('Currency')?.setValue(Currency.PEN);
     }
   }
 
@@ -101,7 +118,7 @@ export class TransactionCreate {
 
   submit(): void {
     this.form.markAllAsTouched();
-    if (this.form.invalid || !this.walletReady() || !this.currency() || this.submitting()) return;
+    if (this.form.invalid || !this.walletReady() || !this.fromWalletId() || this.submitting()) return;
 
     const raw = this.form.getRawValue();
 
@@ -123,11 +140,11 @@ export class TransactionCreate {
     });
 
     const body = {
-      FromWalletId: FROM_WALLET_ID,
+      FromWalletId: this.fromWalletId(),
       ToWalletId:   raw.ToWalletId,
       Amount:       raw.Amount,
-      Currency:     this.currency(),
-      SourceType:   raw.SourceType,
+      Currency:     raw.Currency,
+      SourceType:   this.sourceType,
     };
 
     this.http.post(`${API_BASE.transaction}/Transactions`, body, { headers }).subscribe({

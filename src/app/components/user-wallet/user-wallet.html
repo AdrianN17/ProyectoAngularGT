@@ -50,7 +50,6 @@
     <!-- Botones de acción -->
     <div class="transfer-row">
       <button class="btn-transfer" (click)="openTransferModal()">Transferir</button>
-      <button class="btn-recharge" (click)="showRechargeModal.set(true)">Recargar</button>
     </div>
 
     <!-- Sección 2: Tabs Transferencias / Recargas -->
@@ -91,14 +90,5 @@
     </div>
   }
 
-  <!-- Modal Recarga -->
-  @if (showRechargeModal()) {
-    <div class="modal-backdrop" (click)="showRechargeModal.set(false)">
-      <div class="modal-container" (click)="$event.stopPropagation()">
-        <app-recharge-create
-          (closed)="showRechargeModal.set(false)"
-          (success)="showRechargeModal.set(false)" />
-      </div>
-    </div>
-  }
+
 </div>

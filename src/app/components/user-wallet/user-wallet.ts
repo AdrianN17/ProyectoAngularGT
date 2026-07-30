@@ -6,11 +6,10 @@ import { AuthService } from '../../services/auth.service';
 import { TransactionList } from '../card/transaction-list/transaction-list';
 import { RechargeList } from '../card/recharge-list/recharge-list';
 import { TransactionCreate } from '../card/transaction-create/transaction-create';
-import { RechargeCreate } from '../card/recharge-create/recharge-create';
 
 @Component({
   selector: 'app-user-wallet',
-  imports: [DecimalPipe, TransactionList, RechargeList, TransactionCreate, RechargeCreate],
+  imports: [DecimalPipe, TransactionList, RechargeList, TransactionCreate],
   templateUrl: './user-wallet.html',
   styleUrl: './user-wallet.css',
 })
@@ -23,9 +22,8 @@ export class UserWallet implements OnInit {
   private readonly router        = inject(Router);
   private readonly platformId    = inject(PLATFORM_ID);
 
-  activeTab          = signal<'transactions' | 'recharges'>('transactions');
-  showModal          = signal(false);
-  showRechargeModal  = signal(false);
+  activeTab = signal<'transactions' | 'recharges'>('transactions');
+  showModal = signal(false);
 
   openTransferModal(): void { this.showModal.set(true); }
 
