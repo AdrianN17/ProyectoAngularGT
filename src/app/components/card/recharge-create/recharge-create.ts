@@ -12,6 +12,8 @@ import { ToastService } from '../../../services/toast.service';
 import { WalletInfo } from '../wallet-info/wallet-info';
 import { WalletSchemaResponse } from '../../../services/wallet.service';
 import { API_BASE } from '../../../core/api.config';
+import { ReceiptService } from '../../../core/receipt.service';
+import { RechargeSchemaResponse } from '../recharge-list/recharge.service';
 
 /** Validador personalizado: el valor debe ser un UUID v4 válido */
 function uuidValidator(control: AbstractControl): ValidationErrors | null {
@@ -27,10 +29,11 @@ function uuidValidator(control: AbstractControl): ValidationErrors | null {
   styleUrl: './recharge-create.css',
 })
 export class RechargeCreate implements OnInit {
-  private readonly http         = inject(HttpClient);
-  private readonly authService  = inject(AuthService);
-  private readonly toastService = inject(ToastService);
-  private readonly fb           = inject(FormBuilder);
+  private readonly http          = inject(HttpClient);
+  private readonly authService   = inject(AuthService);
+  private readonly toastService  = inject(ToastService);
+  private readonly receiptService = inject(ReceiptService);
+  private readonly fb            = inject(FormBuilder);
 
   @Input() preselectedWalletId?: string;
 
@@ -39,6 +42,7 @@ export class RechargeCreate implements OnInit {
 
   walletIdForLookup = signal('');
   currency          = signal('');
+  loadedWallet      = signal<WalletSchemaResponse | null>(null);
   walletReady       = signal(false);
   submitting        = signal(false);
   preselected       = signal(false);
@@ -64,6 +68,7 @@ export class RechargeCreate implements OnInit {
     this.walletIdForLookup.set(val.trim());
     this.walletReady.set(false);
     this.currency.set('');
+    this.loadedWallet.set(null);
     this.form.get('Amount')?.disable();
     this.form.get('Amount')?.setValue(null);
   }
@@ -71,6 +76,7 @@ export class RechargeCreate implements OnInit {
   onWalletLoaded(wallet: WalletSchemaResponse | null): void {
     this.walletReady.set(!!wallet);
     this.currency.set(wallet?.Currency ?? '');
+    this.loadedWallet.set(wallet);
     if (wallet) {
       this.form.get('Amount')?.enable();
     } else {
@@ -125,10 +131,19 @@ export class RechargeCreate implements OnInit {
       MethodType: 'TIENDA',
     };
 
-    this.http.post(`${API_BASE.transaction}/recharges`, body, { headers }).subscribe({
-      next: () => {
+    this.http.post<RechargeSchemaResponse>(`${API_BASE.transaction}/recharges`, body, { headers }).subscribe({
+      next: (r) => {
         this.submitting.set(false);
         this.toastService.show('Recarga procesada con éxito', 'success');
+        const w = this.loadedWallet();
+        this.receiptService.downloadRecharge({
+          rechargeId: r?.RechargeId  ?? this.generateUUID(),
+          amount:     raw.Amount!,
+          currency:   this.currency(),
+          walletId:   raw.WalletId!,
+          walletName: w ? `${w.Name} ${w.LastName}` : raw.WalletId!,
+          createdAt:  r?.CreatedAt   ?? new Date().toISOString(),
+        });
         this.success.emit();
       },
       error: () => {

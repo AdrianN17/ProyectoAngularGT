@@ -34,6 +34,7 @@
             <th class="sortable" (click)="setSort('Currency')">Moneda {{ sortIcon('Currency') }}</th>
             <th class="sortable" (click)="setSort('MethodType')">Método {{ sortIcon('MethodType') }}</th>
             <th class="sortable" (click)="setSort('CreatedAt')">Fecha {{ sortIcon('CreatedAt') }}</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +45,14 @@
               <td>{{ r.Currency }}</td>
               <td><span class="badge">{{ r.MethodType }}</span></td>
               <td>{{ r.CreatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <button
+                  class="btn-detail"
+                  [disabled]="downloadingId() === r.RechargeId"
+                  (click)="downloadReceipt(r)">
+                  {{ downloadingId() === r.RechargeId ? '...' : 'Detalle' }}
+                </button>
+              </td>
             </tr>
           }
         </tbody>

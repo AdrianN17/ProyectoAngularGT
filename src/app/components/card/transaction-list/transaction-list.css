@@ -129,6 +129,21 @@
 /* ---- Actions column ---- */
 .actions { white-space: nowrap; }
 
+.btn-detail {
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  border: 1px solid #1A73E8;
+  background: transparent;
+  color: #1A73E8;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+
+.btn-detail:hover:not(:disabled) { background: #1A73E8; color: #fff; }
+.btn-detail:disabled { opacity: 0.5; cursor: default; }
+
 .btn-delete {
   padding: 4px 12px;
   font-size: 0.8rem;

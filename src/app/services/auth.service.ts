@@ -87,7 +87,22 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!(this.ss?.getItem(TOKEN_KEY));
+    const token = this.ss?.getItem(TOKEN_KEY);
+    if (!token) return false;
+    if (this.isTokenExpired(token)) {
+      this.logout();
+      return false;
+    }
+    return true;
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      return typeof payload['exp'] === 'number' && payload['exp'] * 1000 < Date.now();
+    } catch {
+      return true;
+    }
   }
 
   logout(): void {

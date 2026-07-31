@@ -1,7 +1,10 @@
 import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { TransactionService, TransactionSchemaResponse } from './transaction.service';
 import { ToastService } from '../../../services/toast.service';
+import { WalletService } from '../../../services/wallet.service';
+import { ReceiptService } from '../../../core/receipt.service';
 
 type SortField = keyof TransactionSchemaResponse | '';
 type SortDir   = 'asc' | 'desc';
@@ -16,7 +19,11 @@ export class TransactionList implements OnInit {
   @Input({ required: true }) walletId!: string;
 
   private readonly transactionService = inject(TransactionService);
-  private readonly toastService       = inject(ToastService);
+  private readonly toastService        = inject(ToastService);
+  private readonly walletService       = inject(WalletService);
+  private readonly receiptService      = inject(ReceiptService);
+
+  downloadingId = signal('');
 
   transactions = signal<TransactionSchemaResponse[]>([]);
   loading      = signal(true);
@@ -83,6 +90,33 @@ export class TransactionList implements OnInit {
 
   prevPage(): void { if (this.currentPage() > 1) this.currentPage.update(p => p - 1); }
   nextPage(): void { if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1); }
+
+  downloadReceipt(tx: TransactionSchemaResponse): void {
+    if (this.downloadingId()) return;
+    this.downloadingId.set(tx.PaymentId);
+    forkJoin({
+      from: this.walletService.getWallet(tx.FromWalletId),
+      to:   this.walletService.getWallet(tx.ToWalletId),
+    }).subscribe({
+      next: ({ from, to }) => {
+        this.downloadingId.set('');
+        this.receiptService.download({
+          paymentId:    tx.PaymentId,
+          amount:       tx.Amount,
+          currency:     tx.Currency,
+          fromWalletId: tx.FromWalletId,
+          fromName:     `${from.Name} ${from.LastName}`,
+          toWalletId:   tx.ToWalletId,
+          toName:       `${to.Name} ${to.LastName}`,
+          createdAt:    tx.CreatedAt,
+        });
+      },
+      error: () => {
+        this.downloadingId.set('');
+        this.toastService.show('No se pudo generar el comprobante', 'error');
+      },
+    });
+  }
 
   ngOnInit(): void {
     this.transactionService.getTransactions(this.walletId).subscribe({

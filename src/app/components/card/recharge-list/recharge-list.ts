@@ -2,6 +2,8 @@ import { Component, Input, OnInit, signal, inject, computed } from '@angular/cor
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { RechargeService, RechargeSchemaResponse } from './recharge.service';
 import { ToastService } from '../../../services/toast.service';
+import { WalletService } from '../../../services/wallet.service';
+import { ReceiptService } from '../../../core/receipt.service';
 
 type SortField = keyof RechargeSchemaResponse | '';
 type SortDir   = 'asc' | 'desc';
@@ -17,6 +19,10 @@ export class RechargeList implements OnInit {
 
   private readonly rechargeService = inject(RechargeService);
   private readonly toastService    = inject(ToastService);
+  private readonly walletService   = inject(WalletService);
+  private readonly receiptService  = inject(ReceiptService);
+
+  downloadingId = signal('');
 
   recharges   = signal<RechargeSchemaResponse[]>([]);
   loading     = signal(true);
@@ -82,6 +88,28 @@ export class RechargeList implements OnInit {
 
   prevPage(): void { if (this.currentPage() > 1) this.currentPage.update(p => p - 1); }
   nextPage(): void { if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1); }
+
+  downloadReceipt(r: RechargeSchemaResponse): void {
+    if (this.downloadingId()) return;
+    this.downloadingId.set(r.RechargeId);
+    this.walletService.getWallet(r.WalletId).subscribe({
+      next: (wallet) => {
+        this.downloadingId.set('');
+        this.receiptService.downloadRecharge({
+          rechargeId: r.RechargeId,
+          amount:     r.Amount,
+          currency:   r.Currency,
+          walletId:   r.WalletId,
+          walletName: `${wallet.Name} ${wallet.LastName}`,
+          createdAt:  r.CreatedAt,
+        });
+      },
+      error: () => {
+        this.downloadingId.set('');
+        this.toastService.show('No se pudo generar el comprobante', 'error');
+      },
+    });
+  }
 
   ngOnInit(): void {
     this.rechargeService.getRecharges(this.walletId).subscribe({

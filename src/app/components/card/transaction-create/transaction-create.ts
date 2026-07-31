@@ -15,6 +15,8 @@ import { WalletInfo } from '../wallet-info/wallet-info';
 import { WalletService, WalletSchemaResponse } from '../../../services/wallet.service';
 import { API_BASE } from '../../../core/api.config';
 import { Currency } from '../../../models/currency.enum';
+import { ReceiptService } from '../../../core/receipt.service';
+import { TransactionSchemaResponse } from '../transaction-list/transaction.service';
 
 /** Validador personalizado: el valor debe ser un UUID v4 válido */
 function uuidValidator(control: AbstractControl): ValidationErrors | null {
@@ -33,9 +35,10 @@ export class TransactionCreate implements OnInit {
   private readonly http          = inject(HttpClient);
   private readonly authService   = inject(AuthService);
   private readonly toastService  = inject(ToastService);
-  private readonly walletService = inject(WalletService);
-  private readonly fb            = inject(FormBuilder);
-  private readonly platformId    = inject(PLATFORM_ID);
+  private readonly walletService  = inject(WalletService);
+  private readonly receiptService  = inject(ReceiptService);
+  private readonly fb              = inject(FormBuilder);
+  private readonly platformId      = inject(PLATFORM_ID);
 
   private readonly selfTransferValidator: ValidatorFn = (ctrl: AbstractControl) => {
     if (!ctrl.value || !this.fromWalletId()) return null;
@@ -52,6 +55,8 @@ export class TransactionCreate implements OnInit {
 
   toWalletIdForLookup = signal('');
   fromWalletId        = signal('');
+  fromWallet          = signal<WalletSchemaResponse | null>(null);
+  toWallet            = signal<WalletSchemaResponse | null>(null);
   walletReady         = signal(false);
   submitting          = signal(false);
 
@@ -63,7 +68,7 @@ export class TransactionCreate implements OnInit {
     const email = this.authService.getEmail();
     if (!email) return;
     this.walletService.getWalletByEmail(email).subscribe({
-      next: (wallet) => this.fromWalletId.set(wallet.WalletId),
+      next: (wallet) => { this.fromWalletId.set(wallet.WalletId); this.fromWallet.set(wallet); },
       error: () => this.toastService.show('No se pudo cargar tu wallet de origen', 'error'),
     });
   }
@@ -78,6 +83,7 @@ export class TransactionCreate implements OnInit {
     const val = this.form.get('ToWalletId')!.value ?? '';
     this.toWalletIdForLookup.set(val.trim());
     this.walletReady.set(false);
+    this.toWallet.set(null);
     this.form.get('Amount')?.disable();
     this.form.get('Amount')?.setValue(null);
     this.form.get('Currency')?.disable();
@@ -86,6 +92,7 @@ export class TransactionCreate implements OnInit {
 
   onWalletLoaded(wallet: WalletSchemaResponse | null): void {
     this.walletReady.set(!!wallet);
+    this.toWallet.set(wallet);
     if (wallet) {
       this.form.get('Amount')?.enable();
       this.form.get('Currency')?.enable();
@@ -147,10 +154,22 @@ export class TransactionCreate implements OnInit {
       SourceType:   this.sourceType,
     };
 
-    this.http.post(`${API_BASE.transaction}/Transactions`, body, { headers }).subscribe({
-      next: () => {
+    this.http.post<TransactionSchemaResponse>(`${API_BASE.transaction}/Transactions`, body, { headers }).subscribe({
+      next: (tx) => {
         this.submitting.set(false);
         this.toastService.show('Transferencia procesada con éxito', 'success');
+        const from = this.fromWallet();
+        const to   = this.toWallet();
+        this.receiptService.download({
+          paymentId:    tx?.PaymentId    ?? this.generateUUID(),
+          amount:       raw.Amount!,
+          currency:     raw.Currency!,
+          fromWalletId: this.fromWalletId(),
+          fromName:     from ? `${from.Name} ${from.LastName}` : this.fromWalletId(),
+          toWalletId:   raw.ToWalletId!,
+          toName:       to   ? `${to.Name} ${to.LastName}`     : raw.ToWalletId!,
+          createdAt:    tx?.CreatedAt   ?? new Date().toISOString(),
+        });
         this.success.emit();
       },
       error: () => {
