@@ -3,6 +3,7 @@ import { DecimalPipe, DatePipe } from '@angular/common';
 import { TransactionService } from '../../../services/transaction.service';
 import { TransactionResponse } from '../../../models/transaction.model';
 import { ToastService } from '../../../services/toast.service';
+import { showHttpErrors } from '../../../core/http-error.util';
 
 type SortField = keyof TransactionResponse | '';
 type SortDir   = 'asc' | 'desc';
@@ -112,8 +113,8 @@ export class TransactionListDelete implements OnInit {
         this.deleting.set(false);
         if (this.currentPage() > this.totalPages()) this.currentPage.set(this.totalPages());
       },
-      error: () => {
-        this.toastService.show('Error al eliminar la transacción', 'error');
+      error: (err) => {
+        showHttpErrors(err, this.toastService, 'Error al eliminar la transacción');
         this.deleting.set(false);
       },
     });

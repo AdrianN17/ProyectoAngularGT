@@ -10,6 +10,7 @@ import { ToastService } from '../../../services/toast.service';
 import { WalletService } from '../../../services/wallet.service';
 import { DocumentType } from '../../../models/document-type.enum';
 import { WalletResponse, UpdateWalletRequest } from '../../../models/wallet.model';
+import { showHttpErrors } from '../../../core/http-error.util';
 
 function documentNumberValidator(control: AbstractControl): ValidationErrors | null {
   if (!control.value) return null;
@@ -106,9 +107,9 @@ export class EditWallet implements OnInit {
         this.updated.emit({ ...this.wallet, ...patch } as WalletResponse);
         this.closed.emit();
       },
-      error: () => {
+      error: (err) => {
         this.submitting = false;
-        this.toastService.show('Error al actualizar la wallet', 'error');
+        showHttpErrors(err, this.toastService, 'Error al actualizar la wallet');
       },
     });
   }

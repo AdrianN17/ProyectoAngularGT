@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { WalletService } from '../../../services/wallet.service';
 import { ToastService } from '../../../services/toast.service';
+import { showHttpErrors } from '../../../core/http-error.util';
 import { CreateWalletRequest } from '../../../models/wallet.model';
 import { Currency } from '../../../models/currency.enum';
 import { DocumentType } from '../../../models/document-type.enum';
@@ -87,9 +88,9 @@ export class CreateWallet {
         this.created.emit();
         this.closed.emit();
       },
-      error: () => {
+      error: (err) => {
         this.submitting = false;
-        this.toastService.show('Error al crear la wallet', 'error');
+        showHttpErrors(err, this.toastService, 'Error al crear la wallet');
       },
     });
   }

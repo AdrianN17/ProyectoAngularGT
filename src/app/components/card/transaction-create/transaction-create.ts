@@ -13,6 +13,7 @@ import { ToastService } from '../../../services/toast.service';
 import { WalletService } from '../../../services/wallet.service';
 import { TransactionService } from '../../../services/transaction.service';
 import { ReceiptService } from '../../../core/receipt.service';
+import { showHttpErrors } from '../../../core/http-error.util';
 import { WalletInfo } from '../wallet-info/wallet-info';
 import { WalletResponse } from '../../../models/wallet.model';
 import { TransactionResponse } from '../../../models/transaction.model';
@@ -167,9 +168,9 @@ export class TransactionCreate implements OnInit {
         });
         this.success.emit();
       },
-      error: () => {
+      error: (err) => {
         this.submitting.set(false);
-        this.toastService.show('Error al realizar la transferencia', 'error');
+        showHttpErrors(err, this.toastService, 'Error al realizar la transferencia');
       },
     });
   }

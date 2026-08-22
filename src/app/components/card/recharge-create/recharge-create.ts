@@ -10,6 +10,7 @@ import { ToastService } from '../../../services/toast.service';
 import { RechargeService } from '../../../services/recharge.service';
 import { WalletService } from '../../../services/wallet.service';
 import { ReceiptService } from '../../../core/receipt.service';
+import { showHttpErrors } from '../../../core/http-error.util';
 import { WalletInfo } from '../wallet-info/wallet-info';
 import { WalletResponse } from '../../../models/wallet.model';
 import { RechargeResponse } from '../../../models/recharge.model';
@@ -134,9 +135,9 @@ export class RechargeCreate implements OnInit {
         });
         this.success.emit();
       },
-      error: () => {
+      error: (err) => {
         this.submitting.set(false);
-        this.toastService.show('Error al procesar la recarga', 'error');
+        showHttpErrors(err, this.toastService, 'Error al procesar la recarga');
       },
     });
   }

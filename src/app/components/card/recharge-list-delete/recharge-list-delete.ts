@@ -3,6 +3,7 @@ import { DecimalPipe, DatePipe } from '@angular/common';
 import { RechargeService } from '../../../services/recharge.service';
 import { RechargeResponse } from '../../../models/recharge.model';
 import { ToastService } from '../../../services/toast.service';
+import { showHttpErrors } from '../../../core/http-error.util';
 
 type SortField = keyof RechargeResponse | '';
 type SortDir   = 'asc' | 'desc';
@@ -103,8 +104,8 @@ export class RechargeListDelete implements OnInit {
         this.deleting.set(false);
         if (this.currentPage() > this.totalPages()) this.currentPage.set(this.totalPages());
       },
-      error: () => {
-        this.toastService.show('Error al eliminar la recarga', 'error');
+      error: (err) => {
+        showHttpErrors(err, this.toastService, 'Error al eliminar la recarga');
         this.deleting.set(false);
       },
     });
