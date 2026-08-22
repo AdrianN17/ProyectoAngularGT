@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
-import { RechargeService, RechargeSchemaResponse } from '../recharge-list/recharge.service';
+import { RechargeService } from '../../../services/recharge.service';
+import { RechargeResponse } from '../../../models/recharge.model';
 import { ToastService } from '../../../services/toast.service';
 
-type SortField = keyof RechargeSchemaResponse | '';
+type SortField = keyof RechargeResponse | '';
 type SortDir   = 'asc' | 'desc';
 
 @Component({
@@ -18,7 +19,7 @@ export class RechargeListDelete implements OnInit {
   private readonly rechargeService = inject(RechargeService);
   private readonly toastService    = inject(ToastService);
 
-  recharges   = signal<RechargeSchemaResponse[]>([]);
+  recharges   = signal<RechargeResponse[]>([]);
   loading     = signal(true);
   error       = signal('');
 
@@ -33,7 +34,7 @@ export class RechargeListDelete implements OnInit {
   deleting        = signal(false);
 
   sorted = computed(() => {
-    const field = this.sortField() as keyof RechargeSchemaResponse;
+    const field = this.sortField() as keyof RechargeResponse;
     const dir   = this.sortDir();
     const list  = [...this.recharges()];
     if (!field) return list;

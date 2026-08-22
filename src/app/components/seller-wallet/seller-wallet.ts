@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { WalletInfo } from '../card/wallet-info/wallet-info';
-import { WalletSchemaResponse } from '../../services/wallet.service';
+import { WalletResponse } from '../../models/wallet.model';
 import { RechargeCreate } from '../card/recharge-create/recharge-create';
 import { RechargeListMinimun } from '../card/recharge-list-minimun/recharge-list-minimun';
 
@@ -12,7 +12,7 @@ import { RechargeListMinimun } from '../card/recharge-list-minimun/recharge-list
 })
 export class SellerWallet {
   walletIdInput    = signal('');
-  confirmedWallet  = signal<WalletSchemaResponse | null>(null);
+  confirmedWallet  = signal<WalletResponse | null>(null);
   showRechargeModal = signal(false);
 
   onInput(value: string): void {
@@ -20,7 +20,7 @@ export class SellerWallet {
     this.confirmedWallet.set(null);
   }
 
-  onWalletLoaded(wallet: WalletSchemaResponse | null): void {
+  onWalletLoaded(wallet: WalletResponse | null): void {
     this.confirmedWallet.set(wallet);
   }
 

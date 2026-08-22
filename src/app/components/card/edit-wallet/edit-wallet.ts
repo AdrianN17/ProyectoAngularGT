@@ -6,12 +6,10 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
-import { API_BASE } from '../../../core/api.config';
+import { WalletService } from '../../../services/wallet.service';
 import { DocumentType } from '../../../models/document-type.enum';
-import { WalletSchemaResponse } from '../../../services/wallet.service';
+import { WalletResponse, UpdateWalletRequest } from '../../../models/wallet.model';
 
 function documentNumberValidator(control: AbstractControl): ValidationErrors | null {
   if (!control.value) return null;
@@ -31,15 +29,14 @@ function dailyLimitValidator(control: AbstractControl): ValidationErrors | null 
   styleUrl: './edit-wallet.css',
 })
 export class EditWallet implements OnInit {
-  @Input({ required: true }) wallet!: WalletSchemaResponse;
+  @Input({ required: true }) wallet!: WalletResponse;
 
-  private readonly http         = inject(HttpClient);
-  private readonly authService  = inject(AuthService);
-  private readonly toastService = inject(ToastService);
-  private readonly fb           = inject(FormBuilder);
+  private readonly walletService = inject(WalletService);
+  private readonly toastService  = inject(ToastService);
+  private readonly fb            = inject(FormBuilder);
 
   closed  = output<void>();
-  updated = output<WalletSchemaResponse>();
+  updated = output<WalletResponse>();
 
   submitting = false;
 
@@ -101,16 +98,12 @@ export class EditWallet implements OnInit {
     }
 
     this.submitting = true;
-    const headers = new HttpHeaders({
-      Authorization:  `Bearer ${this.authService.getToken()}`,
-      'Content-Type': 'application/json',
-    });
 
-    this.http.patch(`${API_BASE.wallet}/wallets/${this.wallet.WalletId}`, patch, { headers }).subscribe({
+    this.walletService.updateWallet(this.wallet.WalletId, patch as UpdateWalletRequest).subscribe({
       next: () => {
         this.submitting = false;
         this.toastService.show('Wallet actualizada correctamente', 'success');
-        this.updated.emit({ ...this.wallet, ...patch } as WalletSchemaResponse);
+        this.updated.emit({ ...this.wallet, ...patch } as WalletResponse);
         this.closed.emit();
       },
       error: () => {

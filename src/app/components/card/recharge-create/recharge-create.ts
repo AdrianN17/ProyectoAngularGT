@@ -6,14 +6,13 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
-import { WalletInfo } from '../wallet-info/wallet-info';
-import { WalletSchemaResponse } from '../../../services/wallet.service';
-import { API_BASE } from '../../../core/api.config';
+import { RechargeService } from '../../../services/recharge.service';
+import { WalletService } from '../../../services/wallet.service';
 import { ReceiptService } from '../../../core/receipt.service';
-import { RechargeSchemaResponse } from '../recharge-list/recharge.service';
+import { WalletInfo } from '../wallet-info/wallet-info';
+import { WalletResponse } from '../../../models/wallet.model';
+import { RechargeResponse } from '../../../models/recharge.model';
 
 /** Validador personalizado: el valor debe ser un UUID v4 válido */
 function uuidValidator(control: AbstractControl): ValidationErrors | null {
@@ -29,11 +28,10 @@ function uuidValidator(control: AbstractControl): ValidationErrors | null {
   styleUrl: './recharge-create.css',
 })
 export class RechargeCreate implements OnInit {
-  private readonly http          = inject(HttpClient);
-  private readonly authService   = inject(AuthService);
-  private readonly toastService  = inject(ToastService);
-  private readonly receiptService = inject(ReceiptService);
-  private readonly fb            = inject(FormBuilder);
+  private readonly toastService   = inject(ToastService);
+  private readonly rechargeService = inject(RechargeService);
+  private readonly receiptService  = inject(ReceiptService);
+  private readonly fb             = inject(FormBuilder);
 
   @Input() preselectedWalletId?: string;
 
@@ -42,7 +40,7 @@ export class RechargeCreate implements OnInit {
 
   walletIdForLookup = signal('');
   currency          = signal('');
-  loadedWallet      = signal<WalletSchemaResponse | null>(null);
+  loadedWallet      = signal<WalletResponse | null>(null);
   walletReady       = signal(false);
   submitting        = signal(false);
   preselected       = signal(false);
@@ -73,7 +71,7 @@ export class RechargeCreate implements OnInit {
     this.form.get('Amount')?.setValue(null);
   }
 
-  onWalletLoaded(wallet: WalletSchemaResponse | null): void {
+  onWalletLoaded(wallet: WalletResponse | null): void {
     this.walletReady.set(!!wallet);
     this.currency.set(wallet?.Currency ?? '');
     this.loadedWallet.set(wallet);
@@ -118,21 +116,11 @@ export class RechargeCreate implements OnInit {
     this.lastSubmittedHash = hash;
     setTimeout(() => { this.lastSubmittedHash = ''; }, 30_000);
 
-    const headers = new HttpHeaders({
-      Authorization:    `Bearer ${this.authService.getToken()}`,
-      'Content-Type':   'application/json',
-      'idempotency-key': this.generateUUID(),
-    });
-
-    const body = {
-      WalletId:   raw.WalletId,
-      Amount:     raw.Amount,
-      Currency:   this.currency(),
-      MethodType: 'TIENDA',
-    };
-
-    this.http.post<RechargeSchemaResponse>(`${API_BASE.transaction}/recharges`, body, { headers }).subscribe({
-      next: (r) => {
+    this.rechargeService.createRecharge(
+      { WalletId: raw.WalletId!, Amount: raw.Amount!, Currency: this.currency(), MethodType: 'TIENDA' },
+      this.generateUUID(),
+    ).subscribe({
+      next: (r: RechargeResponse) => {
         this.submitting.set(false);
         this.toastService.show('Recarga procesada con éxito', 'success');
         const w = this.loadedWallet();

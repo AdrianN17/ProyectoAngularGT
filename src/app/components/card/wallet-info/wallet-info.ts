@@ -1,6 +1,7 @@
 import { Component, input, output, signal, inject, effect } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { WalletService, WalletSchemaResponse } from '../../../services/wallet.service';
+import { WalletService } from '../../../services/wallet.service';
+import { WalletResponse } from '../../../models/wallet.model';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -12,12 +13,12 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 })
 export class WalletInfo {
   walletId = input('');
-  walletLoaded = output<WalletSchemaResponse | null>();
+  walletLoaded = output<WalletResponse | null>();
 
   private readonly walletService = inject(WalletService);
   private currentSub?: Subscription;
 
-  wallet = signal<WalletSchemaResponse | null>(null);
+  wallet = signal<WalletResponse | null>(null);
   loading = signal(false);
   error = signal('');
 

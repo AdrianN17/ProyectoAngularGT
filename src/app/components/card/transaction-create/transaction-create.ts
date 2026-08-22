@@ -8,15 +8,15 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
-import { WalletInfo } from '../wallet-info/wallet-info';
-import { WalletService, WalletSchemaResponse } from '../../../services/wallet.service';
-import { API_BASE } from '../../../core/api.config';
-import { Currency } from '../../../models/currency.enum';
+import { WalletService } from '../../../services/wallet.service';
+import { TransactionService } from '../../../services/transaction.service';
 import { ReceiptService } from '../../../core/receipt.service';
-import { TransactionSchemaResponse } from '../transaction-list/transaction.service';
+import { WalletInfo } from '../wallet-info/wallet-info';
+import { WalletResponse } from '../../../models/wallet.model';
+import { TransactionResponse } from '../../../models/transaction.model';
+import { Currency } from '../../../models/currency.enum';
 
 /** Validador personalizado: el valor debe ser un UUID v4 válido */
 function uuidValidator(control: AbstractControl): ValidationErrors | null {
@@ -32,10 +32,10 @@ function uuidValidator(control: AbstractControl): ValidationErrors | null {
   styleUrl: './transaction-create.css',
 })
 export class TransactionCreate implements OnInit {
-  private readonly http          = inject(HttpClient);
-  private readonly authService   = inject(AuthService);
-  private readonly toastService  = inject(ToastService);
-  private readonly walletService  = inject(WalletService);
+  private readonly authService     = inject(AuthService);
+  private readonly toastService    = inject(ToastService);
+  private readonly walletService   = inject(WalletService);
+  private readonly transactionService = inject(TransactionService);
   private readonly receiptService  = inject(ReceiptService);
   private readonly fb              = inject(FormBuilder);
   private readonly platformId      = inject(PLATFORM_ID);
@@ -55,8 +55,8 @@ export class TransactionCreate implements OnInit {
 
   toWalletIdForLookup = signal('');
   fromWalletId        = signal('');
-  fromWallet          = signal<WalletSchemaResponse | null>(null);
-  toWallet            = signal<WalletSchemaResponse | null>(null);
+  fromWallet          = signal<WalletResponse | null>(null);
+  toWallet            = signal<WalletResponse | null>(null);
   walletReady         = signal(false);
   submitting          = signal(false);
 
@@ -90,7 +90,7 @@ export class TransactionCreate implements OnInit {
     this.form.get('Currency')?.setValue(Currency.PEN);
   }
 
-  onWalletLoaded(wallet: WalletSchemaResponse | null): void {
+  onWalletLoaded(wallet: WalletResponse | null): void {
     this.walletReady.set(!!wallet);
     this.toWallet.set(wallet);
     if (wallet) {
@@ -140,22 +140,17 @@ export class TransactionCreate implements OnInit {
     this.lastSubmittedHash = hash;
     setTimeout(() => { this.lastSubmittedHash = ''; }, 30_000);
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getToken()}`,
-      'Content-Type': 'application/json',
-      'idempotency-key': this.generateUUID(),
-    });
-
-    const body = {
-      FromWalletId: this.fromWalletId(),
-      ToWalletId:   raw.ToWalletId,
-      Amount:       raw.Amount,
-      Currency:     raw.Currency,
-      SourceType:   this.sourceType,
-    };
-
-    this.http.post<TransactionSchemaResponse>(`${API_BASE.transaction}/Transactions`, body, { headers }).subscribe({
-      next: (tx) => {
+    this.transactionService.createTransaction(
+      {
+        FromWalletId: this.fromWalletId(),
+        ToWalletId:   raw.ToWalletId!,
+        Amount:       raw.Amount!,
+        Currency:     raw.Currency!,
+        SourceType:   this.sourceType,
+      },
+      this.generateUUID(),
+    ).subscribe({
+      next: (tx: TransactionResponse) => {
         this.submitting.set(false);
         this.toastService.show('Transferencia procesada con éxito', 'success');
         const from = this.fromWallet();

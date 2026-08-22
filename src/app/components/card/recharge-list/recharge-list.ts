@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
-import { RechargeService, RechargeSchemaResponse } from './recharge.service';
+import { RechargeService } from '../../../services/recharge.service';
+import { RechargeResponse } from '../../../models/recharge.model';
 import { ToastService } from '../../../services/toast.service';
 import { WalletService } from '../../../services/wallet.service';
 import { ReceiptService } from '../../../core/receipt.service';
 
-type SortField = keyof RechargeSchemaResponse | '';
+type SortField = keyof RechargeResponse | '';
 type SortDir   = 'asc' | 'desc';
 
 @Component({
@@ -24,7 +25,7 @@ export class RechargeList implements OnInit {
 
   downloadingId = signal('');
 
-  recharges   = signal<RechargeSchemaResponse[]>([]);
+  recharges   = signal<RechargeResponse[]>([]);
   loading     = signal(true);
   error       = signal('');
 
@@ -36,7 +37,7 @@ export class RechargeList implements OnInit {
   sortDir   = signal<SortDir>('desc');
 
   sorted = computed(() => {
-    const field = this.sortField() as keyof RechargeSchemaResponse;
+    const field = this.sortField() as keyof RechargeResponse;
     const dir   = this.sortDir();
     const list  = [...this.recharges()];
     if (!field) return list;
@@ -89,7 +90,7 @@ export class RechargeList implements OnInit {
   prevPage(): void { if (this.currentPage() > 1) this.currentPage.update(p => p - 1); }
   nextPage(): void { if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1); }
 
-  downloadReceipt(r: RechargeSchemaResponse): void {
+  downloadReceipt(r: RechargeResponse): void {
     if (this.downloadingId()) return;
     this.downloadingId.set(r.RechargeId);
     this.walletService.getWallet(r.WalletId).subscribe({

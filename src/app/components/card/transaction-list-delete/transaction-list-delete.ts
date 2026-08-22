@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
-import { TransactionService, TransactionSchemaResponse } from '../transaction-list/transaction.service';
+import { TransactionService } from '../../../services/transaction.service';
+import { TransactionResponse } from '../../../models/transaction.model';
 import { ToastService } from '../../../services/toast.service';
 
-type SortField = keyof TransactionSchemaResponse | '';
+type SortField = keyof TransactionResponse | '';
 type SortDir   = 'asc' | 'desc';
 
 @Component({
@@ -18,7 +19,7 @@ export class TransactionListDelete implements OnInit {
   private readonly transactionService = inject(TransactionService);
   private readonly toastService       = inject(ToastService);
 
-  transactions = signal<TransactionSchemaResponse[]>([]);
+  transactions = signal<TransactionResponse[]>([]);
   loading      = signal(true);
   error        = signal('');
 
@@ -29,11 +30,11 @@ export class TransactionListDelete implements OnInit {
   sortField = signal<SortField>('CreatedAt');
   sortDir   = signal<SortDir>('desc');
 
-  pendingDelete = signal<TransactionSchemaResponse | null>(null);
+  pendingDelete = signal<TransactionResponse | null>(null);
   deleting      = signal(false);
 
   sorted = computed(() => {
-    const field = this.sortField() as keyof TransactionSchemaResponse;
+    const field = this.sortField() as keyof TransactionResponse;
     const dir   = this.sortDir();
     const list  = [...this.transactions()];
     if (!field) return list;
@@ -87,7 +88,7 @@ export class TransactionListDelete implements OnInit {
   prevPage(): void { if (this.currentPage() > 1) this.currentPage.update(p => p - 1); }
   nextPage(): void { if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1); }
 
-  requestDelete(tx: TransactionSchemaResponse): void { this.pendingDelete.set(tx); }
+  requestDelete(tx: TransactionResponse): void { this.pendingDelete.set(tx); }
   cancelDelete():  void { if (!this.deleting()) this.pendingDelete.set(null); }
 
   confirmDelete(): void {

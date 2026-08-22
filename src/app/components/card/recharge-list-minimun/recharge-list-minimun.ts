@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, signal, inject } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
-import { RechargeService, RechargeSchemaResponse } from '../recharge-list/recharge.service';
+import { RechargeService } from '../../../services/recharge.service';
+import { RechargeResponse } from '../../../models/recharge.model';
 import { ToastService } from '../../../services/toast.service';
 
 @Component({
@@ -15,7 +16,7 @@ export class RechargeListMinimun implements OnInit {
   private readonly rechargeService = inject(RechargeService);
   private readonly toastService    = inject(ToastService);
 
-  recharges = signal<RechargeSchemaResponse[]>([]);
+  recharges = signal<RechargeResponse[]>([]);
   loading   = signal(true);
   error     = signal('');
 

@@ -2,7 +2,8 @@ import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DecimalPipe } from '@angular/common';
-import { WalletService, WalletSchemaResponse } from '../../services/wallet.service';
+import { WalletService } from '../../services/wallet.service';
+import { WalletResponse } from '../../models/wallet.model';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { API_BASE } from '../../core/api.config';
@@ -26,7 +27,7 @@ export class SupportWallet {
   private readonly http          = inject(HttpClient);
 
   walletIdInput   = signal('');
-  confirmedWallet = signal<WalletSchemaResponse | null>(null);
+  confirmedWallet = signal<WalletResponse | null>(null);
   loadingWallet   = signal(false);
   walletError     = signal('');
 
@@ -57,7 +58,7 @@ export class SupportWallet {
     });
   }
 
-  onWalletUpdated(updated: WalletSchemaResponse): void {
+  onWalletUpdated(updated: WalletResponse): void {
     this.confirmedWallet.set(updated);
     this.showEditModal.set(false);
   }

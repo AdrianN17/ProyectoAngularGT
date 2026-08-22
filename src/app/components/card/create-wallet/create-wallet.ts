@@ -6,10 +6,9 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../../../services/auth.service';
+import { WalletService } from '../../../services/wallet.service';
 import { ToastService } from '../../../services/toast.service';
-import { API_BASE } from '../../../core/api.config';
+import { CreateWalletRequest } from '../../../models/wallet.model';
 import { Currency } from '../../../models/currency.enum';
 import { DocumentType } from '../../../models/document-type.enum';
 
@@ -33,10 +32,9 @@ function dailyLimitValidator(control: AbstractControl): ValidationErrors | null 
   styleUrl: './create-wallet.css',
 })
 export class CreateWallet {
-  private readonly http         = inject(HttpClient);
-  private readonly authService  = inject(AuthService);
-  private readonly toastService = inject(ToastService);
-  private readonly fb           = inject(FormBuilder);
+  private readonly walletService = inject(WalletService);
+  private readonly toastService  = inject(ToastService);
+  private readonly fb            = inject(FormBuilder);
 
   closed  = output<void>();
   created = output<void>();
@@ -82,13 +80,7 @@ export class CreateWallet {
     if (this.form.invalid || this.submitting) return;
     this.submitting = true;
 
-    const headers = new HttpHeaders({
-      Authorization:     `Bearer ${this.authService.getToken()}`,
-      'Content-Type':    'application/json',
-      'idempotency-key': this.generateUUID(),
-    });
-
-    this.http.post(`${API_BASE.wallet}/wallets`, this.form.value, { headers }).subscribe({
+    this.walletService.createWallet(this.form.value as CreateWalletRequest, this.generateUUID()).subscribe({
       next: () => {
         this.submitting = false;
         this.toastService.show('Wallet creada correctamente', 'success');

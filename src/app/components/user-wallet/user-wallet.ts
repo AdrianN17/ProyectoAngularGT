@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DecimalPipe, isPlatformBrowser } from '@angular/common';
-import { WalletService, WalletSchemaResponse } from '../../services/wallet.service';
+import { WalletService } from '../../services/wallet.service';
+import { WalletResponse } from '../../models/wallet.model';
 import { AuthService } from '../../services/auth.service';
 import { TransactionList } from '../card/transaction-list/transaction-list';
 import { RechargeList } from '../card/recharge-list/recharge-list';
@@ -27,7 +28,7 @@ export class UserWallet implements OnInit {
 
   openTransferModal(): void { this.showModal.set(true); }
 
-  wallet  = signal<WalletSchemaResponse | null>(null);
+  wallet  = signal<WalletResponse | null>(null);
   loading = signal(true);
   error   = signal('');
 
