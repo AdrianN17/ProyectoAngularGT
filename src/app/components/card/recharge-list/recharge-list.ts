@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, input, signal, inject, computed } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { RechargeService } from '../../../services/recharge.service';
 import { RechargeResponse } from '../../../models/recharge.model';
@@ -16,7 +16,7 @@ type SortDir   = 'asc' | 'desc';
   styleUrl: './recharge-list.css',
 })
 export class RechargeList implements OnInit {
-  @Input({ required: true }) walletId!: string;
+  walletId = input.required<string>();
 
   private readonly rechargeService = inject(RechargeService);
   private readonly toastService    = inject(ToastService);
@@ -113,7 +113,7 @@ export class RechargeList implements OnInit {
   }
 
   ngOnInit(): void {
-    this.rechargeService.getRecharges(this.walletId).subscribe({
+    this.rechargeService.getRecharges(this.walletId()).subscribe({
       next: (data) => {
         this.recharges.set(data);
         this.loading.set(false);

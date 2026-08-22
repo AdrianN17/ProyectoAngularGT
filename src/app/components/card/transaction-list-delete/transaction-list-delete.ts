@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, input, signal, inject, computed } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { TransactionService } from '../../../services/transaction.service';
 import { TransactionResponse } from '../../../models/transaction.model';
@@ -15,7 +15,7 @@ type SortDir   = 'asc' | 'desc';
   styleUrl: './transaction-list-delete.css',
 })
 export class TransactionListDelete implements OnInit {
-  @Input({ required: true }) walletId!: string;
+  walletId = input.required<string>();
 
   private readonly transactionService = inject(TransactionService);
   private readonly toastService       = inject(ToastService);
@@ -121,7 +121,7 @@ export class TransactionListDelete implements OnInit {
   }
 
   ngOnInit(): void {
-    this.transactionService.getTransactions(this.walletId).subscribe({
+    this.transactionService.getTransactions(this.walletId()).subscribe({
       next: (data) => {
         this.transactions.set(data);
         this.loading.set(false);

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, input, signal, inject } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { RechargeService } from '../../../services/recharge.service';
 import { RechargeResponse } from '../../../models/recharge.model';
@@ -11,7 +11,7 @@ import { ToastService } from '../../../services/toast.service';
   styleUrl: './recharge-list-minimun.css',
 })
 export class RechargeListMinimun implements OnInit {
-  @Input({ required: true }) walletId!: string;
+  walletId = input.required<string>();
 
   private readonly rechargeService = inject(RechargeService);
   private readonly toastService    = inject(ToastService);
@@ -21,7 +21,7 @@ export class RechargeListMinimun implements OnInit {
   error     = signal('');
 
   ngOnInit(): void {
-    this.rechargeService.getRecharges(this.walletId).subscribe({
+    this.rechargeService.getRecharges(this.walletId()).subscribe({
       next: (data) => {
         const top3 = [...data]
           .sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime())

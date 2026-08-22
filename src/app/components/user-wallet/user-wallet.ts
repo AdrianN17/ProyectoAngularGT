@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, input, signal, inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { WalletService } from '../../services/wallet.service';
@@ -15,7 +15,7 @@ import { TransactionCreate } from '../card/transaction-create/transaction-create
   styleUrl: './user-wallet.css',
 })
 export class UserWallet implements OnInit {
-  @Input() walletId?: string;
+  walletId = input<string>();
 
   private readonly walletService = inject(WalletService);
   private readonly authService   = inject(AuthService);
@@ -36,7 +36,7 @@ export class UserWallet implements OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
 
     // Si se pasó walletId por ruta/input, usarlo directamente
-    const routeId = this.walletId ?? this.route.snapshot.paramMap.get('walletId');
+    const routeId = this.walletId() ?? this.route.snapshot.paramMap.get('walletId');
     if (routeId) {
       this.loadById(routeId);
       return;

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, inject, output } from '@angular/core';
+import { Component, OnInit, input, signal, inject, output } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -34,7 +34,7 @@ export class RechargeCreate implements OnInit {
   private readonly receiptService  = inject(ReceiptService);
   private readonly fb             = inject(FormBuilder);
 
-  @Input() preselectedWalletId?: string;
+  preselectedWalletId = input<string>();
 
   closed  = output<void>();
   success = output<void>();
@@ -54,11 +54,11 @@ export class RechargeCreate implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.preselectedWalletId) {
+    if (this.preselectedWalletId()) {
       this.preselected.set(true);
-      this.form.get('WalletId')?.setValue(this.preselectedWalletId);
+      this.form.get('WalletId')?.setValue(this.preselectedWalletId()!);
       this.form.get('WalletId')?.disable();
-      this.walletIdForLookup.set(this.preselectedWalletId);
+      this.walletIdForLookup.set(this.preselectedWalletId()!);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, input, signal, inject, computed } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { TransactionService } from '../../../services/transaction.service';
@@ -17,7 +17,7 @@ type SortDir   = 'asc' | 'desc';
   styleUrl: './transaction-list.css',
 })
 export class TransactionList implements OnInit {
-  @Input({ required: true }) walletId!: string;
+  walletId = input.required<string>();
 
   private readonly transactionService = inject(TransactionService);
   private readonly toastService        = inject(ToastService);
@@ -120,7 +120,7 @@ export class TransactionList implements OnInit {
   }
 
   ngOnInit(): void {
-    this.transactionService.getTransactions(this.walletId).subscribe({
+    this.transactionService.getTransactions(this.walletId()).subscribe({
       next: (data) => {
         this.transactions.set(data);
         this.loading.set(false);

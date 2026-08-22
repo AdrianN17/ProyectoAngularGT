@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, output, inject } from '@angular/core';
+import { Component, OnInit, input, output, inject } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -30,7 +30,7 @@ function dailyLimitValidator(control: AbstractControl): ValidationErrors | null 
   styleUrl: './edit-wallet.css',
 })
 export class EditWallet implements OnInit {
-  @Input({ required: true }) wallet!: WalletResponse;
+  wallet = input.required<WalletResponse>();
 
   private readonly walletService = inject(WalletService);
   private readonly toastService  = inject(ToastService);
@@ -55,13 +55,13 @@ export class EditWallet implements OnInit {
 
   ngOnInit(): void {
     this.form.patchValue({
-      Name:           this.wallet.Name,
-      LastName:       this.wallet.LastName,
-      DocumentType:   this.wallet.DocumentType,
-      DocumentNumber: this.wallet.DocumentNumber,
-      Email:          this.wallet.Email,
-      Phone:          this.wallet.Phone,
-      DailyLimit:     this.wallet.DailyLimit,
+      Name:           this.wallet().Name,
+      LastName:       this.wallet().LastName,
+      DocumentType:   this.wallet().DocumentType,
+      DocumentNumber: this.wallet().DocumentNumber,
+      Email:          this.wallet().Email,
+      Phone:          this.wallet().Phone,
+      DailyLimit:     this.wallet().DailyLimit,
     });
   }
 
@@ -100,11 +100,11 @@ export class EditWallet implements OnInit {
 
     this.submitting = true;
 
-    this.walletService.updateWallet(this.wallet.WalletId, patch as UpdateWalletRequest).subscribe({
+    this.walletService.updateWallet(this.wallet().WalletId, patch as UpdateWalletRequest).subscribe({
       next: () => {
         this.submitting = false;
         this.toastService.show('Wallet actualizada correctamente', 'success');
-        this.updated.emit({ ...this.wallet, ...patch } as WalletResponse);
+        this.updated.emit({ ...this.wallet(), ...patch } as WalletResponse);
         this.closed.emit();
       },
       error: (err) => {
